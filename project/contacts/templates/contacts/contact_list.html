@@ -1,0 +1,157 @@
+{% extends "contacts/base.html" %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="row">
+        <div class="col-md-3 mb-4 d-flex flex-column">
+
+            <!-- Sort side section --> 
+            <div class="list-group" style="margin-top: 0.85rem;">
+                <h5 class="mb-3">Sort:</h5>
+                <a href="{% url 'contact_list_ordered' 'name' %}" class="list-group-item list-group-item-action">Last name A-Z</a>
+                <a href="{% url 'contact_list_ordered' 'name_desc' %}" class="list-group-item list-group-item-action">Last name Z-A</a>
+                <a href="{% url 'contact_list_ordered' 'created' %}" class="list-group-item list-group-item-action">Date ascending</a>
+                <a href="{% url 'contact_list_ordered' 'created_desc' %}" class="list-group-item list-group-item-action">Date descending</a>
+            </div>
+
+            <!-- Add contact side section --> 
+            <div class="list-group">
+                <h5 class="mb-3 mt-3">Other :</h5>
+                <a href="{% url 'contact_create' %}" class="list-group-item list-group-item-action list-group-item-action">Dodaj kontakt</a>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+
+            <!-- Change view buttons --> 
+            <div class="mb-3 text-end gap-2">
+                <button onclick="toggleView('list')" class="btn btn-light"><i class="bi bi-list"></i></button>
+                <button onclick="toggleView('grid')" class="btn btn-light"><i class="bi bi-grid-fill"></i></button>
+            </div>
+
+            <!-- ListView section --> 
+            <ul class="list-group list-group-flush" id="listView">
+                {% for contact in contacts %}    
+                <li class="list-group-item py-4 shadow-sm mb-3">
+                    <a href="{% url 'contact_detail' contact.id %}" class="text-decoration-none text-dark">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="text-center" style="width: 60px;">
+                                {% if contact.weather.rain > 0.2 %}
+                                    <i class="bi bi-cloud-drizzle-fill" style="font-size: 30px; color: blue;"></i>
+                                {% elif contact.weather.cloud_cover > 90 %}
+                                    <i class="bi bi-cloud-fill" style="font-size: 30px; color: blue;"></i>
+                                {% elif contact.weather.is_day == 0 %}
+                                    <i class="bi bi-moon-stars-fill" style="font-size: 30px; color: yellow;"></i>
+                                {% else %}
+                                    <i class="bi bi-brightness-high-fill" style="font-size: 30px; color: yellow;"></i>
+                                {% endif %}
+                            </div>
+              
+                            <div class="flex-grow-1 text-nowrap" style="font-size: clamp(0.8rem, 2vw, 1.1rem);">
+                                <strong>{{ contact.first_name }} {{ contact.last_name }}</strong>
+                            </div>
+              
+                            <div class="d-flex gap-2 text-center">
+                                <div class="text-nowrap" style="width: 70px; font-size: clamp(0.7rem, 2vw, 1rem);">
+                                    <i class="bi bi-thermometer-half" style="color: tomato;"></i><br>
+                                    {{ contact.weather.temperature }} °C
+                                </div>
+                                <div class="text-nowrap" style="width: 70px; font-size: clamp(0.7rem, 2vw, 1rem);">
+                                    <i class="bi bi-moisture" style="color: dodgerblue;"></i><br>
+                                    {{ contact.weather.humidity }}%
+                                </div>
+                                <div class="text-nowrap" style="width: 70px; font-size: clamp(0.7rem, 2vw, 1rem);">
+                                    <i class="bi bi-wind" style="color: gray;"></i><br>
+                                    {{ contact.weather.windspeed }} km/h
+                                </div>
+                            </div>
+              
+                        </div>
+                    </a>
+                </li>              
+            {% endfor %}
+            </ul>
+
+            <!-- GridView section --> 
+            <div id="gridView" class="row row-cols-1 row-cols-md-2 row-cols-lg-2 g-4 d-none">
+            {% for contact in contacts %}
+                <div class="col">
+                    <a href="{% url 'contact_detail' contact.id %}" class="text-decoration-none text-dark">
+                    <div class="card mb-4 shadow-sm">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <div class="card-img-top d-flex justify-content-center align-items-center" style="height: 130px;">
+                                    {% if contact.weather.rain > 0.2 %}
+                                        <i class="bi bi-cloud-drizzle-fill" style="font-size: 100px; color: blue;"></i>
+                                    {% elif contact.weather.cloud_cover > 90 %}
+                                        <i class="bi bi-cloud-fill" style="font-size: 100px; color: blue;"></i>
+                                    {% elif contact.weather.is_day == 0 %}
+                                        <i class="bi bi-moon-stars-fill" style="font-size: 100px; color: yellow;"></i>
+                                    {% else %}
+                                        <i class="bi bi-brightness-high-fill" style="font-size: 100px; color: yellow;"></i>
+                                    {% endif %}
+                                </div>
+                            </li>   
+                            <li class="list-group-item">
+                                <div class="card-body">
+                                    <h3 class="card-title text-center">
+                                        {{ contact.first_name }} {{ contact.last_name }}
+                                    </h3>
+                                
+                                    <div class="row text-center my-4">
+                                    <div class="col-12 col-md-4">
+                                        <i class="bi bi-thermometer-half" style="font-size: clamp(0.7rem, 1.5vw + 0.8rem, 1.3rem); color: tomato;"></i>
+                                        <div class="mt-2">Temperature:</div>
+                                        <div><strong>{{ contact.weather.temperature }}°C</strong></div>
+                                    </div>
+                                    <div class="col-12 col-md-4">
+                                        <i class="bi bi-moisture" style="font-size: clamp(0.7rem, 1.5vw + 0.8rem, 1.3rem); color: dodgerblue;"></i>
+                                        <div class="mt-2">Humidity:</div>
+                                        <div><strong>{{ contact.weather.humidity }}%</strong></div>
+                                    </div>
+                                    <div class="col-12 col-md-4">
+                                        <i class="bi bi-wind" style="font-size: clamp(0.7rem, 1.5vw + 0.8rem, 1.3rem); color: gray;"></i>
+                                        <div class="mt-2">Wind speed:</div>
+                                        <div><strong>{{ contact.weather.windspeed }}km/h</strong></div>
+                                    </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    </a>    
+                </div>
+            {% endfor %}
+            </div>
+        </div>          
+    </div>
+</div>
+
+<script>
+    //Handles changing view choice and store it in localStorage
+    function toggleView(mode) {
+        const listView = document.getElementById('listView');
+        const gridView = document.getElementById('gridView');
+  
+        if (mode === 'list') {
+            listView.classList.remove('d-none');
+            gridView.classList.add('d-none');
+        } else {
+            listView.classList.add('d-none');
+            gridView.classList.remove('d-none');
+        }
+
+        localStorage.setItem('preferredView', mode);
+    }
+
+    //On page loading return last view choice form localStorage 
+    //or return last ListView as default
+    document.addEventListener('DOMContentLoaded', function () {
+        let savedView = localStorage.getItem('preferredView');
+        if (!savedView){
+            savedView = 'list';
+        }
+        toggleView(savedView);
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "contacts/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container my-4 " style="text-align: center;">
+    <!-- Back to contact list button -->
+    <div style="max-width: 500px; margin: auto; text-align: left;">
+        <a href="{% url 'contact_list' %}" class="btn btn-outline-secondary mb-3">← Contacts list</a>
+    </div>
+
+    <!-- Card with add contact form -->
+    <div class="card shadow" style="max-width: 500px; margin: auto; text-align: left;">
+        <div class="card-header">
+            <h5 class="mb-0">Add contact</h5>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+
+                <!-- Submit form button -->
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn bg-dark border-bottom border-body text-white">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
