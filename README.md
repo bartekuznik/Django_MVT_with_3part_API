@@ -1,4 +1,4 @@
-# Design and implementation of a web application supporting the rental of medical equipment
+# Design and implementation of a web application for contact data
 
 ## Table of Contents
 
